@@ -134,7 +134,6 @@ def statistics(banking_data):
         date = item.get_date().split('/')
         if int(date[2]) > latest_year:
             latest_year = int(date[2])
-    print('latest year: {}'.format(latest_year))
 
     temp_array = []
     temp_array.append(latest_year)
@@ -142,26 +141,30 @@ def statistics(banking_data):
 
     for item in banking_data:
         date = item.get_date().split('/')
-        if earliest_year <= int(date[2]):
-            earliest_year = int(date[2]) 
+        if int(date[2]) < earliest_year:
+            earliest_year = int(date[2])
+         
 
-    print('earliest year: {}'.format(earliest_year))
-
-    ##########  Testing  ####################
-    if earliest_year == latest_year:
+    if int(earliest_year) == int(latest_year):
         year_range = [latest_year]
     else:
-        year_range = [*range(earliest_year, latest_year, 1)]
-    print('year range: {}'.format(year_range))
+        year_range = [*range(earliest_year, latest_year + 1, 1)]
+
+    months = [*range(1, 13, 1)]
+
     for year in year_range:
-        months = [*range(1,13,1)]
         year_total = 0
-        for item in banking_data:
-            date = item.get_date().split('/')
-            if str(year) == date[2]:
-                year_total += float(item.get_amount())
-        print('Total spent in {}: ${}\n'.format(year, round(float(year_total)), 2))
-        print(months)
+        for month in months:
+            month_total = 0
+            for item in banking_data:
+                date = item.get_date().split('/')
+                if str(date[2]) == str(year) and str(date[0]) == str(month):
+                    year_total += float(item.get_amount())
+                    month_total += float(item.get_amount())
+            print("{}: ${}".format(month_list[str(month)], round(month_total), 2))
+        print("\n{} total: ${}".format(str(year), round(year_total), 2))
+        print("\n --------------------------------")
+    
 
 
 
