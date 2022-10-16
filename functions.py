@@ -74,7 +74,7 @@ def get_total_of(search, banking_data):
     print("{:.2f}".format(round(total, 2)))
 
 def list_transactions(banking_data):
-    headers = ['ID', 'Date', 'Name', 'Amount']
+    headers = ['Date', 'Name', 'Amount']
     transaction_items = []
     for item in banking_data:
         transac = []
@@ -85,7 +85,7 @@ def list_transactions(banking_data):
     print(tabulate(transaction_items, headers, tablefmt='simple', floatfmt=".2f"))
 
 def list_transactions_of(search, banking_data):
-    headers = ['ID', 'Date', 'Name', 'Amount']
+    headers = ['Date', 'Name', 'Amount']
     filtered_transactions = []
     total = 0
     for item in banking_data:
