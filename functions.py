@@ -163,9 +163,9 @@ def statistics(banking_data):
                     month_total += float(item.get_amount())
             #print("{}: ${:.2f}".format(month_list[str(month)], round(float(month_total)), 2))
             month_total_output = f'{round(float(month_total), 2):.2f}'
-            print(f'{month_list[str(month)]: <10} {month_total_output : >25}')
+            print(f'{month_list[str(month)]: <13} {str(year)} {month_total_output : >15}')
         print("\n{} total: ${:.2f}".format(str(year), round(float(year_total)), 2))
-        print("\n------------------------------------")
+        print("\n----------------------------------")
     
 def analyse_file():
     banking_data = load_file()
