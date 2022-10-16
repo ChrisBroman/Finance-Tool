@@ -63,14 +63,14 @@ def get_total_spending(banking_data):
     total = 0
     for item in banking_data:
         total += float(item.get_amount())
-    print(round(total, 2))
+    print("{:.2f}".format(round(total, 2)))
 
 def get_total_of(search, banking_data):
     total = 0
     for item in banking_data:
         if item.get_name().__contains__(search.lower()) or item.get_name().__contains__(search.upper()):
             total += float(item.get_amount())
-    print(round(total, 2))
+    print("{:.2f}".format(round(total, 2)))
 
 def list_transactions(banking_data):
     headers = ['ID', 'Date', 'Name', 'Amount']
@@ -81,7 +81,7 @@ def list_transactions(banking_data):
         transac.append(item.get_name())
         transac.append(round(float(item.get_amount()),2))
         transaction_items.append(transac)
-    print(tabulate(transaction_items, headers, tablefmt='simple'))
+    print(tabulate(transaction_items, headers, tablefmt='simple', floatfmt=".2f"))
 
 def list_transactions_of(search, banking_data):
     headers = ['ID', 'Date', 'Name', 'Amount']
@@ -95,8 +95,8 @@ def list_transactions_of(search, banking_data):
             transac.append(float(item.get_amount()))
             filtered_transactions.append(transac)
             total += float(item.get_amount())
-    print(tabulate(filtered_transactions, headers, tablefmt='simple'))
-    print("\nTotal expense: ${}".format(round(total, 2)))
+    print(tabulate(filtered_transactions, headers, tablefmt='simple', floatfmt=".2f"))
+    print("\nTotal expense: ${:.2f}".format(round(total, 2)))
 
 def list_by_date(month, year, banking_data):
     year_transactions = []
@@ -125,8 +125,8 @@ def list_by_date(month, year, banking_data):
 
     print()
     headers = ["ID", "Date", "Name", "Amount"]
-    print(tabulate(transactions, headers, tablefmt='simple'))
-    print("\nTotal Expenses are ${}\n".format(round(float(total), 2)))
+    print(tabulate(transactions, headers, tablefmt='simple', floatfmt=".2f"))
+    print("\nTotal Expenses are ${:.2f}\n".format(round(float(total), 2)))
 
 def statistics(banking_data):
     latest_year = 0
@@ -161,13 +161,12 @@ def statistics(banking_data):
                 if str(date[2]) == str(year) and str(date[0]) == str(month):
                     year_total += float(item.get_amount())
                     month_total += float(item.get_amount())
-            print("{}: ${}".format(month_list[str(month)], round(month_total), 2))
-        print("\n{} total: ${}".format(str(year), round(year_total), 2))
-        print("\n --------------------------------")
+            #print("{}: ${:.2f}".format(month_list[str(month)], round(float(month_total)), 2))
+            month_total_output = f'{round(float(month_total), 2):.2f}'
+            print(f'{month_list[str(month)]: <10} {month_total_output : >25}')
+        print("\n{} total: ${:.2f}".format(str(year), round(float(year_total)), 2))
+        print("\n------------------------------------")
     
-
-
-
 def analyse_file():
     banking_data = load_file()
     print('Please select one of the following options:\n')
