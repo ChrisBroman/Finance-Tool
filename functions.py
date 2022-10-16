@@ -2,7 +2,9 @@ from classes import *
 from pathlib import Path
 import pickle
 from tabulate import tabulate
-import sys
+import sys, os
+
+path = Path(os.path.join(os.environ.get('HOME'), '.banking_data'))
 
 def parse_file(input_file):
     if input_file[-4:] != '.csv':
@@ -34,18 +36,17 @@ def process_file(input_file):
 
 def check_file():
     banking_data = []
-    path = Path("banking.data")
     if path.is_file() == 0:
-        with open('banking.data', 'wb') as file:
+        with open(path, 'wb') as file:
             pickle.dump(banking_data, file)
 
 def load_file():
-    with open('banking.data', 'rb') as file:
+    with open(path, 'rb') as file:
         banking_data = pickle.load(file)
     return banking_data
 
 def save_file(banking_data):
-    with open('banking.data', 'wb') as file:
+    with open(path, 'wb') as file:
         pickle.dump(banking_data, file)
 
 def append_file(new_data):
@@ -116,7 +117,6 @@ def list_by_date(month, year, banking_data):
     transactions = []
     for item in month_transactions:
         transac = []
-        transac.append(item.get_id())
         transac.append(item.get_date())
         transac.append(item.get_name())
         transac.append(round(float(item.get_amount()),2))
@@ -124,9 +124,68 @@ def list_by_date(month, year, banking_data):
         total += float(item.get_amount())
 
     print()
-    headers = ["ID", "Date", "Name", "Amount"]
+    headers = ["Date", "Name", "Amount"]
     print(tabulate(transactions, headers, tablefmt='simple', floatfmt=".2f"))
     print("\nTotal Expenses are ${:.2f}\n".format(round(float(total), 2)))
+
+def list_by_year_and_place(year, search, banking_data):
+    year_transactions = []
+    formatted_transactions = []
+    headers = ["Date", "Name", "Amount"]
+    total = 0
+
+    for item in banking_data:
+        date = item.get_date().split('/')
+        if int(date[2]) == int(year):
+            if item.get_name().__contains__(search.lower()) or item.get_name().__contains__(search.upper()):
+                year_transactions.append(item)
+
+    print(year_transactions)
+
+    for item in year_transactions:
+        transac = []
+        transac.append(item.get_date())
+        transac.append(item.get_name())
+        transac.append(round(float(item.get_amount()), 2))
+        formatted_transactions.append(transac)
+        total += float(item.get_amount())
+
+    print(tabulate(formatted_transactions, headers, tablefmt='simple', floatfmt=".2f"))
+    print("\nTotal Expenses are ${:.2f}\n".format(round(float(total), 2)))
+
+def list_by_year_month_and_place(year, month, search, banking_data):
+    year_transactions = []
+    month_transactions = []
+    formatted_transactions = []
+    output_transactions = []
+    headers = ["Date", "Name", "Amount"]
+    total = 0
+
+    for item in banking_data:
+        date = item.get_date().split('/')
+        if int(date[2]) == int(year):
+            year_transactions.append(item)
+
+    for item in year_transactions:
+        date = item.get_date().split('/')
+        if int(date[0]) == int(month):
+            month_transactions.append(item)
+
+    for item in month_transactions:
+        if item.get_name().__contains__(search.lower()) or item.get_name().__contains__(search.upper()):
+            formatted_transactions.append(item)
+
+    for item in formatted_transactions:
+        transac = []
+        transac.append(item.get_date())
+        transac.append(item.get_name())
+        transac.append(float(item.get_amount()))
+        output_transactions.append(transac)
+        total += float(item.get_amount())
+
+    print(tabulate(output_transactions, headers, tablefmt='simple', floatfmt=".2f"))
+    print("\nTotal Expenses are ${:.2f}\n".format(round(float(total), 2)))
+    
 
 def statistics(banking_data):
     latest_year = 0
@@ -175,8 +234,10 @@ def analyse_file():
     print('3. List all transactions')
     print('4. List all transactions from specific place')
     print('5. List transactions by date')
-    print('6. Statistics Page')
-    print('\n7. Back\n')
+    print('6. List specific place in one year')
+    print('7. List specific place in a specific month')
+    print('8. Statistics Page')
+    print('\n9. Back\n')
     selection = input('>> ')
     print()
 
@@ -195,8 +256,16 @@ def analyse_file():
         month = input('Please enter the month (M): ')
         list_by_date(month, year, banking_data)
     elif selection == '6':
-        statistics(banking_data)
+        year = input('Please enter the year (YYYY): ')
+        store = input('Enter the search term: ')
+        list_by_year_and_place(year, store, banking_data)
     elif selection == '7':
+        store = input('Enter the search term: ')
+        year = input('Please enter the year (YYYY): ')
+        month = input('Please enter the month (M): ')
+        list_by_year_month_and_place(year, month, store, banking_data)
+    elif selection == '8':
+        statistics(banking_data)
         return
     else:
         raise Exception('Not a valid answer')
